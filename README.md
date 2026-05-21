@@ -1,36 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PinoyMart UAE — Smart WhatsApp Grocery Ordering Platform
 
-## Getting Started
+Modern mobile-first grocery web app for Filipino grocery stores in the UAE.
+Customers browse online, add to cart, then complete checkout via a **prefilled
+WhatsApp message** — no complex checkout, no payment integration headaches.
 
-First, run the development server:
+> Built as a portfolio piece and a real, ship-able product foundation.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## Phase 1 (this build)
+
+- Modern Filipino-warm UI (amber + red on warm neutrals)
+- Mobile-first responsive layout with bottom-tab nav
+- 35+ sample products across 9 grocery categories
+- Homepage: hero, perk strip, category tiles, featured, promos, "Just in"
+- Catalog: search, sort, category filter, promo toggle
+- Product detail with quantity stepper + related items
+- Cart with quantity controls, persistence (localStorage via Zustand)
+- **WhatsApp checkout**: form → preview message → opens `wa.me` link
+- Admin dashboard UI (stats, recent orders, top products, low stock)
+
+## Stack
+
+| Layer | Choice |
+|---|---|
+| Framework | Next.js 16 (App Router) + TypeScript |
+| Styling | Tailwind CSS v4 (CSS-first config) |
+| UI primitives | shadcn-style local components |
+| Icons | lucide-react |
+| State | Zustand (persisted cart) |
+| Forms | React Hook Form + Zod |
+| Backend *(Phase 2)* | Supabase (Auth · Postgres · Storage) |
+| Hosting | Vercel (frontend) + Supabase Cloud (backend) |
+
+## Project structure
+
+```
+src/
+├── app/
+│   ├── (shop)/                  customer-facing pages
+│   │   ├── layout.tsx           header + footer + mobile nav
+│   │   ├── page.tsx             homepage
+│   │   ├── products/
+│   │   │   ├── page.tsx
+│   │   │   ├── products-view.tsx
+│   │   │   └── [slug]/page.tsx
+│   │   └── cart/
+│   │       ├── page.tsx
+│   │       └── cart-view.tsx
+│   ├── admin/                   admin console (mocked, Phase 2 wires auth)
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── globals.css              theme tokens + base
+│   └── layout.tsx               root layout + metadata
+├── components/
+│   ├── ui/                      Button, Card, Badge, Input, …
+│   ├── shop/                    Header, Footer, ProductCard, HeroBanner, …
+│   └── admin/                   StatCard
+├── data/                        sample products & categories
+├── lib/                         constants, format, whatsapp builder, utils
+├── store/                       Zustand cart store
+└── types/                       shared TS types
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Getting started
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Then open **http://localhost:3000**.
 
-## Learn More
+To change the destination WhatsApp number, edit `whatsappNumber` in
+`src/lib/constants.ts` (use E.164 digits only, e.g. `971501234567`).
 
-To learn more about Next.js, take a look at the following resources:
+## How the WhatsApp checkout works
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Customer fills cart and opens **/cart**.
+2. They enter name, UAE contact, and delivery location.
+3. On submit, the app:
+   - generates a formatted order summary,
+   - shows a preview modal,
+   - opens `https://wa.me/<number>?text=<encoded message>` in WhatsApp.
+4. The store receives a ready-to-act-on message — no custom backend required.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+See `src/lib/whatsapp.ts` for the message template.
 
-## Deploy on Vercel
+## Phase 2 (next)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Supabase Auth (admin login only first)
+- Product CRUD with Supabase Postgres
+- Image uploads to Supabase Storage
+- Real orders table + admin order management
+- Soft loyalty: customer accounts (optional)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+Private portfolio project.

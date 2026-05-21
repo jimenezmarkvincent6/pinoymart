@@ -1,0 +1,51 @@
+rules_version = '2';
+
+// ⚠️  BOOTSTRAP-ONLY RULES — paste these into Firestore Console BEFORE running
+// `npm run seed`. After the seed succeeds, replace with the contents of
+// `firestore.rules` to lock things down.
+//
+// Difference from production: signed-in users can write their own /admins/{uid}
+// doc, so the seed script can register itself as a super-admin during the
+// initial setup. The production rules block this entirely.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isSuperAdmin() {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'super';
+    }
+
+    // Bootstrap: any signed-in user may create / update / read their OWN admin doc.
+    // Replace with the production block once the seed is done.
+    match /admins/{uid} {
+      allow read, write: if isSignedIn() && request.auth.uid == uid;
+    }
+
+    match /categories/{slug} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+    match /branches/{branchId} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+    match /promos/{promoId} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+    match /orders/{orderId} {
+      allow create: if true;
+      allow read, update, delete: if isSuperAdmin();
+    }
+  }
+}
