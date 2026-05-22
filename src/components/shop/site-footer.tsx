@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Mail } from "lucide-react";
 import { SITE } from "@/lib/constants";
+import { getSiteSettings } from "@/lib/data/settings";
 import { Logo } from "./logo";
 import { FacebookIcon, InstagramIcon, TiktokIcon } from "./social-icons";
 import { FooterBranchInfo } from "./footer-branch-info";
@@ -32,7 +33,14 @@ const groups = [
   },
 ];
 
-export function SiteFooter() {
+export async function SiteFooter() {
+  const settings = await getSiteSettings();
+  const socials = [
+    { href: settings.facebookUrl, label: "Facebook", Icon: FacebookIcon },
+    { href: settings.instagramUrl, label: "Instagram", Icon: InstagramIcon },
+    { href: settings.tiktokUrl, label: "TikTok", Icon: TiktokIcon },
+  ];
+
   return (
     <footer className="mt-20 border-t border-[hsl(var(--brand-dark-border))] bg-[hsl(var(--brand-dark))] text-[hsl(var(--brand-dark-foreground))] pb-24 md:pb-12">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-5">
@@ -42,33 +50,37 @@ export function SiteFooter() {
             {SITE.description}
           </p>
           <FooterBranchInfo />
-          <p className="mt-2 inline-flex items-center gap-2 text-xs text-[hsl(var(--brand-dark-muted))]">
+          <a
+            href={`mailto:${settings.supportEmail}`}
+            className="mt-2 inline-flex items-center gap-2 text-xs text-[hsl(var(--brand-dark-muted))] transition-colors hover:text-white"
+          >
             <Mail className="h-3.5 w-3.5" />
-            {SITE.supportEmail}
-          </p>
+            {settings.supportEmail}
+          </a>
 
           <div className="mt-5 flex gap-2">
-            <a
-              href="#"
-              aria-label="Facebook"
-              className="grid h-9 w-9 place-items-center rounded-full border border-white/10 bg-white/5 transition-colors hover:bg-white/15"
-            >
-              <FacebookIcon className="h-4 w-4" />
-            </a>
-            <a
-              href="#"
-              aria-label="Instagram"
-              className="grid h-9 w-9 place-items-center rounded-full border border-white/10 bg-white/5 transition-colors hover:bg-white/15"
-            >
-              <InstagramIcon className="h-4 w-4" />
-            </a>
-            <a
-              href="#"
-              aria-label="TikTok"
-              className="grid h-9 w-9 place-items-center rounded-full border border-white/10 bg-white/5 transition-colors hover:bg-white/15"
-            >
-              <TiktokIcon className="h-4 w-4" />
-            </a>
+            {socials.map(({ href, label, Icon }) =>
+              href ? (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="grid h-9 w-9 place-items-center rounded-full border border-white/10 bg-white/5 transition-colors hover:bg-white/15"
+                >
+                  <Icon className="h-4 w-4" />
+                </a>
+              ) : (
+                <span
+                  key={label}
+                  aria-label={`${label} (not set)`}
+                  className="grid h-9 w-9 place-items-center rounded-full border border-white/5 bg-white/[0.03] text-white/30"
+                >
+                  <Icon className="h-4 w-4" />
+                </span>
+              )
+            )}
           </div>
         </div>
 
@@ -94,7 +106,7 @@ export function SiteFooter() {
       <div className="border-t border-[hsl(var(--brand-dark-border))]">
         <div className="mx-auto flex max-w-6xl flex-col items-start gap-2 px-4 py-6 text-xs text-[hsl(var(--brand-dark-muted))] sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <p>© {new Date().getFullYear()} {SITE.name}. All rights reserved.</p>
-          <p>Built with Next.js · Tailwind · Supabase</p>
+          <p>Built with Next.js · Tailwind · Firebase</p>
         </div>
       </div>
     </footer>

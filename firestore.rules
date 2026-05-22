@@ -45,6 +45,11 @@ service cloud.firestore {
       allow write: if isSuperAdmin();
     }
 
+    match /settings/{docId} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+
     // ─── Orders ────────────────────────────────────────────────────────────
     // Customers create orders (no auth needed).
     // Only super-admins can read or modify orders.

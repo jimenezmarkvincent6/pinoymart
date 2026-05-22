@@ -1,9 +1,13 @@
 import Link from "next/link";
 import { ArrowRight, MessageCircle, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SITE } from "@/lib/constants";
 
-export function HeroBanner() {
+interface HeroBannerProps {
+  deliveryFeeNote: string;
+  whatsappNumber: string;
+}
+
+export function HeroBanner({ deliveryFeeNote, whatsappNumber }: HeroBannerProps) {
   return (
     <section className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/15 via-card to-accent/10 px-5 py-8 shadow-[0_0_40px_-12px_rgba(0,0,0,0.6)] sm:rounded-3xl sm:px-10 sm:py-14">
       <div className="absolute inset-0 bg-warm-grid opacity-60" aria-hidden />
@@ -31,7 +35,7 @@ export function HeroBanner() {
               </Link>
             </Button>
             <Button asChild size="xl" variant="whatsapp" className="w-full sm:w-auto">
-              <Link href={`https://wa.me/${SITE.whatsappNumber}`} target="_blank">
+              <Link href={`https://wa.me/${whatsappNumber}`} target="_blank">
                 <MessageCircle className="h-4 w-4" />
                 Chat us
               </Link>
@@ -40,7 +44,7 @@ export function HeroBanner() {
 
           <div className="mt-6 inline-flex items-center gap-2 text-sm text-muted-foreground">
             <Truck className="h-4 w-4 text-primary" />
-            {SITE.deliveryFeeNote}
+            {deliveryFeeNote}
           </div>
         </div>
 

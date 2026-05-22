@@ -21,6 +21,7 @@ export const COL = {
   promos: "promos",
   orders: "orders",
   admins: "admins",
+  settings: "settings",
 } as const;
 
 // ── Document shapes (Firestore-native) ──────────────────────────────────────
@@ -93,6 +94,25 @@ export interface PromoBannerDoc {
 }
 
 export const HOMEPAGE_BANNER_ID = "homepage-banner";
+
+/**
+ * Store-wide settings. Stored at `settings/site` (singleton).
+ * Branch-specific contact details live on each branch doc; these are the
+ * store-level defaults + marketing copy + social links.
+ */
+export interface SiteSettingsDoc {
+  supportEmail: string;
+  /** Fallback WhatsApp (E.164 digits) for the hero "Chat us" button. */
+  defaultWhatsappNumber: string;
+  /** Marketing line shown under the hero CTAs. */
+  deliveryFeeNote: string;
+  facebookUrl: string;
+  instagramUrl: string;
+  tiktokUrl: string;
+  updatedAt: number;
+}
+
+export const SITE_SETTINGS_ID = "site";
 
 /** Document body for an order. Firestore manages the `id` separately —
  *  consumers should use `doc.id` (combined as `OrderDoc & { id: string }`). */

@@ -10,6 +10,7 @@ import {
   getProducts,
 } from "@/lib/data/products";
 import { DEFAULT_HOMEPAGE_BANNER, getHomepageBanner } from "@/lib/data/promos";
+import { getSiteSettings } from "@/lib/data/settings";
 
 // Re-fetch from Firestore every 60s so admin edits propagate quickly.
 export const revalidate = 60;
@@ -38,19 +39,24 @@ const perks = [
 ];
 
 export default async function HomePage() {
-  const [categories, allProducts, featured, promos, bannerFromDb] = await Promise.all([
-    getCategories(),
-    getProducts(),
-    getFeaturedProducts(),
-    getPromoProducts(),
-    getHomepageBanner(),
-  ]);
+  const [categories, allProducts, featured, promos, bannerFromDb, settings] =
+    await Promise.all([
+      getCategories(),
+      getProducts(),
+      getFeaturedProducts(),
+      getPromoProducts(),
+      getHomepageBanner(),
+      getSiteSettings(),
+    ]);
   const newProducts = allProducts.slice(-6);
   const banner = bannerFromDb ?? DEFAULT_HOMEPAGE_BANNER;
 
   return (
     <div className="mx-auto max-w-6xl space-y-8 px-4 py-5 sm:space-y-12 sm:px-6 sm:py-10">
-      <HeroBanner />
+      <HeroBanner
+        deliveryFeeNote={settings.deliveryFeeNote}
+        whatsappNumber={settings.defaultWhatsappNumber}
+      />
 
       {/* Perk strip */}
       <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
